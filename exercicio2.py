@@ -1,5 +1,7 @@
-#  INPUT
-from wsgiref import validate
+from curses import window
+from distutils.log import error
+from logging import exception
+import traceback
 
 
 def __universal_print_hour__(time: str):
@@ -12,7 +14,7 @@ def __universal_print_hour__(time: str):
         type_hour[:] = [""]
         if len(time) == 4:
             _time = [4]
-            _time[0] = "0"
+            _time[0] = ""
     else:
         type_hour[0] = "(PM)"
         type_hour[1] = "(AM)"
@@ -78,13 +80,12 @@ def __universal_print_hour__(time: str):
                 print(f"Boa madrugada! São {_hour}:{_minute}{type_hour[1]} da madrugada.")
                 __time_left__(_hour, _minute, str(type_hour[1]), "da madrugada")
     
-    if time.__contains__("pm") and not is_24:
+    if time.lower().__contains__("pm") and not is_24:
         return __pm__(str(hour[0] + hour[1]), str(minute[0] + minute[1]))
-    elif time.__contains__("am") and not is_24:
+    elif time.lower().__contains__("am") and not is_24:
         return __am__(str(hour[0] + hour[1]), str(minute[0] + minute[1]))
     elif is_24:
         return __time_24__(int(str(hour[0] + hour[1])), int(str(minute[0] + minute[1])))
-
 
 
 def __time_left__(h: int, m: int, tph: str, refernce_time: str):
@@ -117,11 +118,10 @@ def __time_left__(h: int, m: int, tph: str, refernce_time: str):
         word[0] = "Faltam"
         word[1] = "horas"
 
-    n = 60 - m    
-    if n == 1:
+    if 60 - m == 1:
         word[2] = "Falta"
         word[3] = "minuto"
-    elif n > 1:
+    elif 60 - m > 1:
         word[2] = "Faltam"
         word[3] = "minutos"
         
@@ -133,21 +133,29 @@ def __time_left__(h: int, m: int, tph: str, refernce_time: str):
 
 
 
-check = True
-is_24: bool
-input_hour = input("Insira a hora: ")
-if input_hour.lower().__contains__("pm") or input_hour.lower().__contains__("am"):
-    is_24 = False
-else:
-     is_24 = True
+try:
+    is_24: bool
+    input_hour = input("Insira a hora: ")
+    if input_hour.lower().__contains__("pm") or input_hour.lower().__contains__("am"):
+        is_24 = False
+    else:
+        is_24 = True
+        
+
+    if is_24:
+        print("\nFormato (24 horas)\n")
+        __universal_print_hour__(input_hour)
+    elif not is_24:
+        print("\nFormato (12 horas)\n")
+        __universal_print_hour__(input_hour)
+
+    print("\nCorreu tudo bem\n")
+except:
+    print(f"\nOcorreu um erro\n")
+
+print(open window("Wxplorer.exe"))
+
 
 
 #  OUTPUT
-if is_24:
-    print("\nFormato (24 horas)")
-    __universal_print_hour__(input_hour)
-    print("\n")
-else:
-    print("\nFormato (12 horas)")
-    __universal_print_hour__(input_hour)
-    print("\n")
+
